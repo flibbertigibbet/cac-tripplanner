@@ -1,4 +1,10 @@
 ---
+- name: Download OpenTripPlanner
+  get_url: url={{ otp_url }}
+           dest={{ otp_bin_dir }}/{{ otp_jar_name }}
+           force=yes
+           mode=0775
+
 - name: Create Directory for OSM and GTFS
   file: path={{ otp_data_dir }} state=directory owner={{ otp_user }}
 
