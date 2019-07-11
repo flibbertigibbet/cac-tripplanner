@@ -13,7 +13,7 @@
     - libjpeg-dev
 
 - name: Install pip packages
-  pip: name={{ item.name }} version={{ item.version }}
+  pip: name={{ item.name }} version={{ item.version }} extra_args="--no-binary django"
   with_items: "{{ cac_python_dependencies }}"
 
   # Putting 'editable: false' in the entry in cac_python_dependencies should make it install
@@ -41,20 +41,12 @@
 - name: Write secrets file
   template: src=cac_secrets.j2 dest=/etc/cac_secrets
   when: develop or production
-  notify: Restart cac-tripplanner-app
-
-- name: Configure Gunicorn settings
-  template: src=gunicorn-cac-tripplanner.py.j2 dest={{ root_conf_dir }}/gunicorn.py
-  notify: Restart cac-tripplanner-app
-
-- name: Configure service definition
-  template: src=upstart-cac-tripplanner-app.conf.j2 dest=/etc/init/cac-tripplanner-app.conf
-  notify: Restart cac-tripplanner-app
+  notify: Restart {{ gunicorn_app_name }}
 
 - name: Run migrations
   django_manage: command=migrate
                  app_path=/opt/app/python/cac_tripplanner
-  notify: Restart cac-tripplanner-app
+  notify: Restart {{ gunicorn_app_name }}
   when: develop or test
 
 - name: Run collectstatic
@@ -71,6 +63,9 @@
 - name: Copy nginx config
   template: src=nginx-default.j2 dest=/etc/nginx/sites-available/default
   notify: Restart nginx
+
+- name: Enable nginx service
+  service: name=nginx.service enabled=yes
 
 - { import_tasks: jslibs.yml }
 

@@ -4,6 +4,19 @@ java_major_version: "8"
 
 app_username: "vagrant"
 
+# used by nginx and gunicorn to set timeouts; OTP defaults to 30s
+otp_session_timeout_s: 90
+
+# gunicorn
+gunicorn_user: "www-data"
+gunicorn_version: 19.9.0
+gunicorn_bind: "127.0.0.1:8080"
+gunicorn_app_dir: "/opt/app/python/cac_tripplanner"
+gunicorn_dynamic_workers: True
+gunicorn_app_name: cac
+gunicorn_wsgi: cac_tripplanner.wsgi
+gunicorn_timeout: "{{ otp_session_timeout_s }}"
+
 postgres_db: "cac_tripplanner"
 postgres_user: "cac_tripplanner"
 postgres_password: "cac_tripplanner"
@@ -20,9 +33,6 @@ pip_version: 19.1.*
 virtualenv_version: 16.5.0
 
 otp_router: "default"
-
-# used by nginx and gunicorn to set timeouts; OTP defaults to 30s
-otp_session_timeout_s: 90
 
 s3_otp_data: cleanair-otp-data
 

@@ -6,6 +6,11 @@ production: false
 # open trip planner vars
 otp_process_mem: 5G
 
+# gunicorn
+gunicorn_bind: "0.0.0.0:8080"
+gunicorn_reload: "true"
+gunicorn_loglevel: "debug"
+
 # for cac_secrets
 allowed_hosts: ['127.0.0.1', 'localhost']
 internal_ips: ['0.0.0.0', '127.0.0.1']
